@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="こんなときどうする">
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>こんなときどうする？｜吉田流ライディング理論</title>
+<style>
+  :root{
+    --ink:#141414; --sub:#6b6b6b; --line:#e6e6e6; --bg:#f6f6f4; --card:#ffffff;
+    --accent:#d4231b; --accent-soft:#fdecea; --on:#141414;
+    --r:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",system-ui,sans-serif;
+    font-size:16px;line-height:1.75}
+  button{font:inherit;color:inherit}
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px calc(110px + env(safe-area-inset-bottom))}
+
+  /* ヘッダー */
+  header.top{background:#111;color:#fff;padding:calc(18px + env(safe-area-inset-top)) 0 20px}
+  header.top .in{max-width:720px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:14px}
+  header.top img{width:84px;height:84px;border-radius:50%;flex:none}
+  header.top .lab{font-size:11px;letter-spacing:.14em;color:#bdbdbd;font-weight:700}
+  header.top h1{margin:2px 0 0;font-size:22px;line-height:1.3;font-weight:800;letter-spacing:.02em}
+  header.top h1 span{color:#ff4a40}
+
+  /* タブ */
+  .tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:12px 0 10px;border-bottom:1px solid var(--line)}
+  .tabs button{flex:1;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 0;font-weight:700;font-size:15px;cursor:pointer}
+  .tabs button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .tabs .badge{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:999px;background:var(--accent);color:#fff;font-size:12px;line-height:20px}
+
+  .tabs .badge[hidden]{display:none}
+  .tabs .st{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;font-size:12px;margin-right:6px;vertical-align:-3px}
+  .tabs button:disabled{opacity:.45;cursor:default}
+  .jump{position:sticky;top:var(--tabsH,70px);z-index:4;display:flex;gap:6px;overflow-x:auto;padding:8px 0;background:var(--bg);scrollbar-width:none}
+  .jump::-webkit-scrollbar{display:none}
+  .jump button{min-height:40px;flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
+  .jump button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .next{display:block;width:100%;margin-top:20px;padding:14px;border:0;border-radius:12px;background:var(--ink);color:#fff;font-weight:800;cursor:pointer}
+  .vid:first-child{flex-direction:column;align-items:stretch}.vid:first-child .th{width:100%}
+  .vid .vt small{color:var(--accent);font-weight:700}
+  .screen{display:none}.screen.on{display:block}
+  .guide{margin:16px 2px 10px;color:var(--sub);font-size:14px}
+  .guide b{color:var(--ink)}
+
+  .search{position:relative;margin:0 0 12px}
+  .search input{width:100%;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px 12px 40px;font:inherit;font-size:16px;outline:none}
+  .search input:focus{border-color:var(--ink)}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--sub)}
+
+  .cats{display:flex;gap:6px;overflow-x:auto;padding:2px 0 14px;scrollbar-width:none}
+  .cats::-webkit-scrollbar{display:none}
+  .cats button{min-height:40px;flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 13px;font-size:13.5px;cursor:pointer;white-space:nowrap}
+  .cats button.on{border-color:var(--ink);background:var(--ink);color:#fff}
+
+  .group{margin:0 0 16px}
+  .group h2{font-size:15px;letter-spacing:.04em;color:var(--ink);margin:4px 2px 8px;font-weight:700}
+  .list{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer}
+  .row:first-child{border-top:0}
+  .row .no{flex:none;width:30px;height:30px;border-radius:8px;background:#f0f0ee;display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+  .row .tt{flex:1;font-size:16.5px;line-height:1.45;font-weight:600}
+  .row.sel .tt{color:var(--ink)}
+  .row.sel{background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)}
+  .row.sel .no{color:var(--accent)}
+  .sw{flex:none;width:56px;height:32px;border-radius:999px;background:#d9d9d9;position:relative;transition:background .18s}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s}
+  .row.sel .sw{background:var(--accent)}
+  .row.sel .sw::after{transform:translateX(24px)}
+  .row.sel .sw::before{content:"ON";position:absolute;left:8px;top:6px;font-size:11px;font-weight:800;color:#fff;line-height:20px}
+  .empty{color:var(--sub);text-align:center;padding:28px 0;font-size:14px}
+
+  /* 下のバー */
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+  .bar .in{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:center}
+  .bar .cnt{flex:1;white-space:nowrap;font-size:14px;color:var(--sub)}
+  .bar .cnt b{color:var(--ink);font-size:18px}
+  .bar .go{border:0;background:var(--accent);color:#fff;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer}
+  .bar .clr.warn{color:var(--accent);font-weight:700}
+  .bar .go:disabled{background:#ececec;color:#9a9a9a}
+  .bar .clr{border:0;background:none;color:var(--sub);text-decoration:underline;padding:11px 4px;font-size:14px;cursor:pointer}
+
+  /* 解説 */
+  .tip{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:10px;padding:12px 14px;font-size:14px;color:#333;margin:16px 0}
+  .card{scroll-margin-top:calc(var(--tabsH,70px) + 60px);background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin:0 0 14px;overflow:hidden}
+  .card .hd{display:flex;gap:12px;align-items:flex-start;width:100%;padding:16px;border:0;background:none;text-align:left;cursor:pointer}
+  .card .num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .card .ti{flex:1}
+  .card .ti .h3{display:block;margin:0;font-size:17px;font-weight:800;line-height:1.45}
+  .card .ti small{display:block;color:var(--sub);font-size:12.5px;margin-top:3px}
+  .card .chev{flex:none;width:20px;height:20px;margin-top:7px;transition:transform .2s;stroke:var(--sub)}
+  .card.open .chev{transform:rotate(180deg)}
+  .card .bd{display:none;padding:0 16px 18px}
+  .card.open .bd{display:block}
+  .sec{margin-top:16px}
+  .sec h4{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:15px;letter-spacing:.04em;color:var(--accent)}
+  .sec h4::before{content:"";width:14px;height:2px;background:var(--accent)}
+  .sec p{margin:0 0 8px;font-size:17px;line-height:1.85}
+  .sec.fix{background:#fafaf8;border-radius:10px;padding:12px 14px;margin-inline:-6px}
+  h3,.h3,.row .tt,.rel button,.vid .vt,.jump button,.next{word-break:auto-phrase;text-wrap:pretty}
+  .fig{margin:6px 0 10px}.fig img{width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}.fig figcaption{font-size:13px;color:var(--sub);text-align:center;margin-top:4px}
+  .vids{display:grid;gap:10px}
+  .vid{display:flex;gap:12px;align-items:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff}
+  .vid .th{flex:none;width:120px;aspect-ratio:16/9;border-radius:8px;background:#222 center/cover no-repeat;position:relative}
+  .vid .th::after{content:"";position:absolute;inset:0;margin:auto;width:34px;height:24px;border-radius:7px;background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.5 2.5v5l4-2.5z' fill='white'/%3E%3C/svg%3E") center/16px no-repeat}
+  .vid .vt{flex:1;font-size:14px;font-weight:700;line-height:1.45}
+  .vid .vt small{display:block;font-weight:400;color:var(--sub);font-size:12px;margin-top:2px}
+  .rel{display:flex;flex-wrap:wrap;gap:8px}
+  .rel button{min-height:40px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13.5px;cursor:pointer}
+  a.go{color:var(--accent);font-weight:700;display:inline-block;min-width:2em;padding:8px 2px;margin:-8px 0;text-align:center;text-decoration:underline}
+  .rel button b{color:var(--accent);margin-right:4px}
+  .rel button.sel{border-color:var(--accent);background:var(--accent-soft)}
+  .none{text-align:center;padding:40px 10px;color:var(--sub)}
+  .none img{width:96px;height:96px;border-radius:50%;opacity:.9;margin-bottom:10px}
+  .none button{margin-top:12px;border:0;background:var(--ink);color:#fff;border-radius:12px;padding:11px 18px;font-weight:700;cursor:pointer}
+  footer{text-align:center;color:var(--sub);font-size:12px;margin:28px 0 0;line-height:1.8}
+  footer img{display:none}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="in">
+    <img src="logo.png" alt="究極 SAFETY RIDING ロゴ">
+    <div>
+      <div class="lab">吉田流ライディング理論</div>
+      <h1>こんなとき<span>どうする？</span></h1>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs">
+    <button id="tPick" class="on"><span class="st">1</span>苦手を選ぶ</button>
+    <button id="tView" disabled><span class="st">2</span>解説を読む<span class="badge" id="badge" hidden></span></button>
+  </nav>
+
+  <section id="pick" class="screen on">
+    <p class="guide">当てはまる苦手の<b>スイッチをオン</b>にして、「解説を見る」を押してください。いくつ選んでもかまいません。番号が小さいほど基本の苦手です。</p>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="言葉で探す（例：ふくらむ、一本橋）" autocomplete="off">
+    </div>
+    <div class="cats" id="cats"></div>
+    <div id="groups"></div>
+  </section>
+
+  <section id="view" class="screen">
+    <div id="cards"></div>
+  </section>
+
+  <footer>
+    <img src="logo.png" alt="">
+    吉田流ライディング理論 第11章「できない」別ヒントより<br>
+    選んだスイッチは、この端末にだけ保存されます
+  </footer>
+</div>
+
+<div class="bar" id="bar">
+  <div class="in">
+    <div class="cnt">選んだ苦手 <b id="cnt">0</b> 件</div>
+    <button class="clr" id="clr">すべて解除</button>
+    <button class="go" id="go" disabled>解説を見る</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const store = {
+    get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+    set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  };
+  const byN = n => ITEMS.find(x => x.n === n);
+  const catName = id => (CATS.find(c => c.id === id) || {}).name || '';
+  let saved = store.get('yrt_sel', []); if (!Array.isArray(saved)) saved = [];
+  let sel = new Set(saved.map(Number).filter(byN));
+  let cat = 'all';
+  let openN = null;
+  let skipHash = false;
+
+  // 分類
+  [{ id:'all', name:'すべて' }].concat(CATS).forEach(c => {
+    const b = document.createElement('button');
+    b.textContent = c.name; b.dataset.c = c.id;
+    if (c.id === 'all') b.className = 'on';
+    b.onclick = () => { cat = c.id; document.querySelectorAll('.cats button').forEach(x => x.classList.toggle('on', x === b)); renderPick(); };
+    $('cats').appendChild(b);
+  });
+
+  const norm = s => s.normalize('NFKC').toLowerCase().replace(/\s/g, '').replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+  function renderPick(){
+    const q = norm($('q').value);
+    const hit = ITEMS.filter(it => (cat === 'all' || it.cat === cat) &&
+      (!q || norm(it.t + it.s + it.c.join('') + it.f.join('') + it.p.join('') + it.m.join('')).includes(q)));
+    const g = $('groups'); g.innerHTML = '';
+    if (!hit.length){ g.innerHTML = '<p class="empty">当てはまる項目がありません。別の言葉で探してみてください。</p>'; return; }
+    CATS.forEach(c => {
+      const items = hit.filter(it => it.cat === c.id);
+      if (!items.length) return;
+      const box = document.createElement('div'); box.className = 'group';
+      box.innerHTML = `<h2>${esc(c.name)}</h2><div class="list"></div>`;
+      items.forEach(it => {
+        const r = document.createElement('button');
+        r.className = 'row' + (sel.has(it.n) ? ' sel' : '');
+        r.setAttribute('role', 'switch'); r.setAttribute('aria-checked', sel.has(it.n));
+        r.innerHTML = `<span class="no">${it.n}</span><span class="tt">${esc(it.t)}</span><span class="sw"></span>`;
+        r.onclick = () => { toggle(it.n); r.classList.toggle('sel', sel.has(it.n)); r.setAttribute('aria-checked', sel.has(it.n)); };
+        box.querySelector('.list').appendChild(r);
+      });
+      g.appendChild(box);
+    });
+  }
+
+  function toggle(n){
+    sel.has(n) ? sel.delete(n) : sel.add(n);
+    store.set('yrt_sel', [...sel]);
+    updateBar();
+  }
+  function updateBar(){
+    $('cnt').textContent = sel.size;
+    $('go').disabled = !sel.size;
+    $('tView').disabled = !sel.size;
+    $('badge').hidden = !sel.size; $('badge').textContent = sel.size;
+  }
+
+  // 本文の番号をリンクにする
+  const linkify = text => esc(text)
+    .replace(/この章の(\d+)((?:、\d+)*)/g, (m, a, rest) => 'この章の' + mk(a) + rest.replace(/\d+/g, mk))
+    .replace(/(?<![第\d.])(\d+)(へ|を見て)/g, (m, a, b) => mk(a) + b)
+    .replace(/（(\d+)）/g, (m, a) => '（' + mk(a) + '）');
+  function mk(a){ const n = +a; return byN(n) && n <= 28 ? `<a href="#c${n}" data-go="${n}" class="go">${a}</a>` : a; }
+
+  const ytId = u => (u.match(/(?:youtu\.be\/|v=|shorts\/)([\w-]{11})/) || [])[1];
+  const paras = arr => arr.map(t => `<p>${linkify(t)}</p>`).join('');
+
+  function renderView(){
+    const box = $('cards');
+    const list = [...sel].sort((a, b) => a - b).map(byN);
+    if (!list.length){
+      box.innerHTML = `<div class="none"><img src="logo.png" alt=""><div>まだ苦手が選ばれていません。</div><button id="back2">苦手を選ぶ</button></div>`;
+      $('back2').onclick = () => show('pick');
+      return;
+    }
+    if (openN === null || (openN !== -1 && !sel.has(openN))) openN = list[0].n;
+    box.innerHTML = (list.length > 1 ? `<div class="tip">「できない」には順番があります。いくつも当てはまるときは、<b>番号の小さいほう（基本に近いほう）</b>から取り組んでください。</div>` : '<div style="height:16px"></div>') +
+      (list.length > 1 ? `<div class="jump">${list.map(x => `<button data-open="${x.n}" data-j="${x.n}" class="${x.n === openN ? 'on' : ''}">${x.n} ${esc(x.s)}</button>`).join('')}</div>` : '') +
+      list.map((it, i) => {
+        const vids = it.v.map(([t, u]) => {
+          const id = ytId(u);
+          return `<a class="vid" href="${esc(u)}" target="_blank" rel="noopener"><span class="th" style="${id ? `background-image:url(https://i.ytimg.com/vi/${id}/mqdefault.jpg)` : ''}"></span><span class="vt">${esc(t)}<small>YouTubeで開く ↗</small></span></a>`;
+        }).join('');
+        const rel = it.rel.map(byN).filter(Boolean).map(r =>
+          `<button data-rel="${r.n}" class="${sel.has(r.n) ? 'sel' : ''}"><b>${r.n}</b>${esc(r.s)}</button>`).join('');
+        return `<article class="card${it.n === openN ? ' open' : ''}" id="c${it.n}">
+          <button class="hd" data-open="${it.n}" aria-expanded="${it.n === openN}"><span class="num">${it.n}</span><span class="ti"><span class="h3">${esc(it.t)}</span><small>${esc(catName(it.cat))}　｜　${esc(it.ch)}</small></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="bd">
+            <div class="sec"><h4>どうなっている？（原因）</h4>${paras(it.c)}${it.fig ? `<figure class="fig"><img src="${it.fig[0]}" alt="${esc(it.fig[1])}" loading="lazy"><figcaption>${esc(it.fig[1])}</figcaption></figure>` : ''}</div>
+            <div class="sec fix"><h4>直し方</h4>${paras(it.f)}</div>
+            ${vids ? `<div class="sec"><h4>関連動画</h4><div class="vids">${vids}</div></div>` : ''}
+            ${it.p.length ? `<div class="sec"><h4>練習方法</h4>${paras(it.p)}</div>` : ''}
+            ${it.m.length ? `<div class="sec"><h4>こんなときは</h4>${paras(it.m)}</div>` : ''}
+            ${rel ? `<div class="sec"><h4>あわせて見たい</h4><div class="rel">${rel}</div></div>` : ''}
+            ${i < list.length - 1 ? `<button class="next" data-open="${list[i+1].n}">次の苦手へ：${list[i+1].n} ${esc(list[i+1].s)} →</button>` : ''}
+          </div></article>`;
+      }).join('');
+  }
+
+  function centerJump(){ const j = document.querySelector('.jump .on'); if (j) j.scrollIntoView({ inline:'center', block:'nearest' }); }
+  function setTabsH(){ document.documentElement.style.setProperty('--tabsH', document.querySelector('.tabs').offsetHeight + 'px'); }
+  window.addEventListener('resize', setTabsH);
+
+  function openItem(n){
+    if (!sel.has(n)){ sel.add(n); store.set('yrt_sel', [...sel]); updateBar(); }
+    openN = n; renderView(); show('view', false); centerJump();
+    const el = $('c' + n); if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  $('cards').addEventListener('click', e => {
+    const h = e.target.closest('[data-open]');
+    if (h){ const n = +h.dataset.open; const fromCard = h.classList.contains('hd'); openN = (fromCard && openN === n ? -1 : n);
+      document.querySelectorAll('.jump button').forEach(b => b.classList.toggle('on', +b.dataset.j === openN));
+      document.querySelectorAll('.card .hd').forEach(b => b.setAttribute('aria-expanded', +b.dataset.open === openN));
+      centerJump();
+      document.querySelectorAll('.card').forEach(c => c.classList.toggle('open', c.id === 'c' + openN));
+      if (openN === n) setTimeout(() => $('c' + n).scrollIntoView({ behavior:'smooth', block:'start' }), 30);
+      return; }
+    const r = e.target.closest('[data-rel]'); if (r){ openItem(+r.dataset.rel); return; }
+    const g = e.target.closest('[data-go]'); if (g){ e.preventDefault(); openItem(+g.dataset.go); }
+  });
+
+  function show(which, top = true, fromPop = false){
+    if (!fromPop){ const want = which === 'view' ? '#view' : '#pick'; if (location.hash !== want){ skipHash = true; try{ if (which === 'pick') location.replace(want); else location.hash = want; }catch(e){} } }
+    $('pick').classList.toggle('on', which === 'pick');
+    $('view').classList.toggle('on', which === 'view');
+    $('tPick').classList.toggle('on', which === 'pick');
+    $('tView').classList.toggle('on', which === 'view');
+    $('bar').style.display = which === 'pick' ? '' : 'none';
+    if (which === 'view' && top !== false){ renderView(); setTimeout(centerJump, 0); }
+    if (which === 'pick') renderPick();
+    if (top) window.scrollTo({ top: 0 });
+  }
+  $('tPick').onclick = () => show('pick');
+  $('tView').onclick = () => show('view');
+  $('go').onclick = () => { openN = null; show('view'); };
+  let clrT = null;
+  $('clr').onclick = () => { if (!sel.size) return;
+    if (!clrT){ $('clr').textContent = 'もう一度で解除'; $('clr').classList.add('warn'); clrT = setTimeout(() => { clrT = null; $('clr').textContent = 'すべて解除'; $('clr').classList.remove('warn'); }, 3000); return; }
+    clearTimeout(clrT); clrT = null; $('clr').textContent = 'すべて解除'; $('clr').classList.remove('warn'); sel.clear(); store.set('yrt_sel', []); updateBar(); renderPick(); };
+  $('q').addEventListener('input', renderPick);
+
+  window.addEventListener('hashchange', () => { if (skipHash){ skipHash = false; return; } show(location.hash === '#view' && sel.size ? 'view' : 'pick', true, true); });
+  updateBar(); renderPick(); setTabsH();
+  if (location.hash === '#view' && sel.size) show('view', true, true);
+})();
+</script>
+</body>
+</html>
