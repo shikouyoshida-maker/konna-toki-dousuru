@@ -121,9 +121,30 @@
   .none{text-align:center;padding:40px 10px;color:var(--sub)}
   .none img{width:96px;height:96px;border-radius:50%;opacity:.9;margin-bottom:10px}
   .none button{margin-top:12px;border:0;background:var(--ink);color:#fff;border-radius:12px;padding:11px 18px;font-weight:700;cursor:pointer}
+  header.top .how{margin-left:auto;flex:none;border:1px solid #444;background:#222;color:#fff;border-radius:12px;padding:9px 11px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+  @media (max-width:440px){ header.top .in{gap:10px} header.top img{width:60px;height:60px} header.top h1{font-size:19px;white-space:nowrap} header.top .how{padding:8px 9px;font-size:12px} }
+  .howbg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:none}
+  .howbg.on{display:block}
+  .howsh{position:absolute;left:0;right:0;bottom:0;top:calc(24px + env(safe-area-inset-top));max-width:720px;margin:0 auto;background:var(--bg);border-radius:18px 18px 0 0;display:flex;flex-direction:column}
+  .howhd{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .howhd b{font-size:17px;flex:1}
+  .howhd button{border:0;background:var(--ink);color:#fff;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-family:inherit}
+  .howbd{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 16px calc(30px + env(safe-area-inset-bottom));font-size:15px;line-height:1.75}
+  .howbd h3{font-size:16px;margin:20px 0 4px;display:flex;align-items:center;gap:8px}
+  .howbd h3 .n{background:var(--accent);color:#fff;border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+  .howbd p{margin:4px 0}
+  .howbd ul{margin:4px 0;padding-left:1.3em}
+  .howbd img{display:block;width:100%;max-width:360px;margin:10px auto 4px;border-radius:12px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+  .howbd .cap{text-align:center;font-size:12px;color:var(--sub)}
+  .howbd .note{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:8px}
+  .howbd .end{display:block;width:100%;margin-top:24px;padding:14px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
   footer{text-align:center;color:var(--sub);font-size:12px;margin:28px 0 0;line-height:1.8}
   footer img{display:none}
 </style>
+<script>
+// LINEの中で開いたら、Safari／Chromeで開き直す
+(function(){try{var ua=navigator.userAgent||"";if(/ Line\//i.test(ua)&&!/[?&]openExternalBrowser=1/.test(location.search)){var q=location.search?location.search+"&":"?";location.replace(location.origin+location.pathname+q+"openExternalBrowser=1"+location.hash);}}catch(e){}})();
+</script>
 </head>
 <body>
 <header class="top">
@@ -133,6 +154,7 @@
       <div class="lab">吉田流ライディング理論</div>
       <h1>こんなとき<span>どうする？</span></h1>
     </div>
+    <button class="how" id="howBtn" type="button">📖 使い方</button>
   </div>
 </header>
 
@@ -168,6 +190,52 @@
     <div class="cnt">選んだ苦手 <b id="cnt">0</b> 件</div>
     <button class="clr" id="clr">すべて解除</button>
     <button class="go" id="go" disabled>解説を見る</button>
+  </div>
+</div>
+
+<div class="howbg" id="how" role="dialog" aria-label="使い方">
+  <div class="howsh">
+    <div class="howhd"><b>📖 使い方</b><button id="howX" type="button">とじる</button></div>
+    <div class="howbd" id="howBd">
+      <p>練習でうまくいかないこと（苦手）を選ぶと、吉田流ライディング理論の<b>原因・直し方・練習方法・動画</b>が読めるアプリです。</p>
+
+      <h3><span class="n">1</span>ホーム画面に入れる</h3>
+      <ul>
+        <li>iPhoneは<b>Safari</b>、Androidは<b>Chrome</b>で開いてください。LINEから開いたときは自動でブラウザに切り替わります。</li>
+        <li>Safariの共有ボタン（□に↑）→<b>「ホーム画面に追加」</b>で、吉田塾のロゴのアイコンから開けるようになります。</li>
+      </ul>
+
+      <h3><span class="n">2</span>苦手を探す</h3>
+      <p>上の分類（曲がる・旋回、ブレーキ・止まる など）を押すか、検索に<b>「ふくらむ」「一本橋」</b>のような言葉を入れて探します。</p>
+      <img src="guide/h1-search.jpg" alt="分類と検索" loading="lazy"><div class="cap">分類を押す、または言葉で探す</div>
+
+      <h3><span class="n">3</span>当てはまる苦手のスイッチをオン</h3>
+      <p>自分に当てはまるものの<b>スイッチをオン</b>にします。いくつ選んでもかまいません。番号が小さいほど基本の苦手です。</p>
+      <img src="guide/h2-switch.jpg" alt="スイッチをオンにする" loading="lazy"><div class="cap">当てはまるものをオンにする</div>
+
+      <h3><span class="n">4</span>「解説を見る」を押す</h3>
+      <p>画面下の<b>「解説を見る」</b>を押すと、選んだ苦手の解説に切り替わります。上の「① 苦手を選ぶ」「② 解説を読む」でも行き来できます。</p>
+      <img src="guide/h3-go.jpg" alt="解説を見るボタン" loading="lazy"><div class="cap">選んだ数が出る。押すと解説へ</div>
+
+      <h3><span class="n">5</span>解説を読む</h3>
+      <p>1つの苦手ごとに<b>「どうなっている？（原因）」→「直し方」→「関連動画」→「練習方法」→「こんなときは」</b>の順に書いてあります。見出しを押すと開いたり閉じたりします。</p>
+      <img src="guide/h4-card.jpg" alt="解説の中身" loading="lazy"><div class="cap">原因 → 直し方 → 動画 → 練習方法</div>
+
+      <h3><span class="n">6</span>いくつも選んだとき</h3>
+      <p>上に並ぶボタンで苦手を切り替えます。<b>番号の小さいほう（基本に近いほう）から</b>取り組むのがおすすめです。読み終わったら下の<b>「次の苦手へ」</b>で進めます。</p>
+      <img src="guide/h5-jump.jpg" alt="苦手の切り替え" loading="lazy"><div class="cap">上のボタンで切り替え</div>
+
+      <h3><span class="n">7</span>つながっている項目を見る</h3>
+      <p>本文の<b>赤い番号</b>（「18へ」など）や、下の<b>「あわせて見たい」</b>を押すと、その項目へ飛びます。動画は押すとYouTubeで開きます。</p>
+      <img src="guide/h6-rel.jpg" alt="あわせて見たい" loading="lazy"><div class="cap">関連する苦手へ移動できる</div>
+
+      <h3><span class="n">8</span>選び直す</h3>
+      <ul>
+        <li>選んだ苦手は<b>このスマホに保存</b>され、次に開いたときも残っています。</li>
+        <li>全部やめるときは、画面下の<b>「すべて解除」を2回</b>押します（間違えて消さないように2回）。</li>
+      </ul>
+      <button class="end" id="howEnd" type="button">さっそく苦手を選ぶ</button>
+    </div>
   </div>
 </div>
 
@@ -321,6 +389,14 @@
 
   window.addEventListener('hashchange', () => { if (skipHash){ skipHash = false; return; } show(location.hash === '#view' && sel.size ? 'view' : 'pick', true, true); });
   updateBar(); renderPick(); setTabsH();
+  // 使い方（初めて開いたときは自動で出す）
+  const how = $('how');
+  const openHow = () => { how.classList.add('on'); document.body.style.overflow = 'hidden'; $('howBd').scrollTop = 0; };
+  const closeHow = () => { how.classList.remove('on'); document.body.style.overflow = ''; };
+  $('howBtn').onclick = openHow; $('howX').onclick = closeHow;
+  $('howEnd').onclick = () => { closeHow(); show('pick'); };
+  how.addEventListener('click', e => { if (e.target === how) closeHow(); });
+  if (!store.get('yrt_howSeen', false)) { store.set('yrt_howSeen', true); openHow(); }
   if (location.hash === '#view' && sel.size) show('view', true, true);
 })();
 </script>
